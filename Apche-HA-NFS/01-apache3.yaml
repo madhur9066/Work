@@ -1,0 +1,68 @@
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apache3
+  namespace: demo
+  labels:
+    app: apache3
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apache3
+
+  template:
+    metadata:
+      labels:
+        app: apache3
+
+    spec:
+      hostname: apache3
+
+      containers:
+      - name: apache
+        image: httpd:2.4
+        imagePullPolicy: IfNotPresent
+
+        ports:
+        - containerPort: 80
+
+        volumeMounts:
+        - name: nfs-share
+          mountPath: /usr/local/apache2/htdocs
+
+        - name: apache-config
+          mountPath: /usr/local/apache2/conf/httpd.conf
+          subPath: httpd.conf
+
+      volumes:
+      - name: nfs-share
+        nfs:
+          server: 192.168.1.130
+          path: /nfs/shared
+
+      - name: apache-config
+        configMap:
+          name: apache-config
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: apache3
+  namespace: demo
+
+spec:
+  type: LoadBalancer
+  loadBalancerIP: 192.168.1.193
+
+  selector:
+    app: apache3
+
+  ports:
+  - name: http
+    protocol: TCP
+    port: 80
+    targetPort: 80

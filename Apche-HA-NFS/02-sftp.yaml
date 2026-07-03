@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sftp
+  namespace: demo
+  labels:
+    app: sftp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sftp
+
+  template:
+    metadata:
+      labels:
+        app: sftp
+
+    spec:
+      containers:
+      - name: sftp
+        image: linuxserver/openssh-server:latest
+        imagePullPolicy: IfNotPresent
+
+        ports:
+        - containerPort: 2222
+          name: ssh
+
+        env:
+        - name: PUID
+          value: "1000"
+
+        - name: PGID
+          value: "1000"
+
+        - name: TZ
+          value: "Asia/Kolkata"
+
+        - name: USER_NAME
+          value: "demo"
+
+        - name: USER_PASSWORD
+          value: "demo123"
+
+        - name: PASSWORD_ACCESS
+          value: "true"
+
+        - name: SUDO_ACCESS
+          value: "true"
+
+        volumeMounts:
+        - name: nfs-share
+          mountPath: /config
+
+        - name: nfs-share
+          mountPath: /home/demo/upload
+
+      volumes:
+      - name: nfs-share
+        nfs:
+          server: 192.168.1.130
+          path: /nfs/shared/files
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sftp
+  namespace: demo
+
+spec:
+  type: LoadBalancer
+  loadBalancerIP: 192.168.1.194
+
+  selector:
+    app: sftp
+
+  ports:
+  - name: ssh
+    protocol: TCP
+    port: 22
+    targetPort: 2222
+

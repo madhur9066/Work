@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Server Load Balancer Demo</title>
+
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.15);
+        }
+
+        h1 {
+            text-align: center;
+            color: #0d6efd;
+        }
+
+        h2 {
+            color: #198754;
+            border-bottom: 2px solid #198754;
+            padding-bottom: 5px;
+        }
+
+        p {
+            font-size: 17px;
+            line-height: 1.6;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            margin-bottom: 30px;
+        }
+
+        table, th, td {
+            border: 1px solid #cccccc;
+        }
+
+        th {
+            background-color: #0d6efd;
+            color: white;
+            padding: 10px;
+        }
+
+        td {
+            padding: 10px;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .url {
+            background: #198754;
+            color: white;
+            font-size: 22px;
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            color: gray;
+            font-size: 14px;
+        }
+
+        .success {
+            color: #198754;
+            font-weight: bold;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Web Server Load Balancer with Shared NFS Storage</h1>
+
+    <p align="center">
+        This demonstration shows multiple web servers serving the same website content
+        from a shared <strong>NFS Storage</strong>. Incoming client requests are
+        distributed across the web servers by a <strong>Global Load Balancer (HAProxy)</strong>.
+        Website content can be uploaded through an <strong>SFTP Server</strong> and is
+        immediately available on all web servers.
+    </p>
+
+    <h2>Components Used</h2>
+
+    <table>
+        <tr>
+            <th>Component</th>
+            <th>Purpose</th>
+        </tr>
+
+        <tr>
+            <td>Apache HTTP Server (3 Instances)</td>
+            <td>Hosts and serves the website content.</td>
+        </tr>
+
+        <tr>
+            <td>Global Load Balancer (HAProxy)</td>
+            <td>Distributes incoming HTTP requests across all Apache web servers.</td>
+        </tr>
+
+        <tr>
+            <td>NFS Server</td>
+            <td>Provides shared storage accessed by all web servers.</td>
+        </tr>
+
+        <tr>
+            <td>SFTP Server</td>
+            <td>Allows users to upload and manage website files stored on the shared NFS location.</td>
+        </tr>
+
+        <tr>
+            <td>Shared NFS Storage</td>
+            <td>Ensures all web servers serve the same website content.</td>
+        </tr>
+
+    </table>
+
+    <h2>Environment Details</h2>
+
+    <table>
+
+        <tr>
+            <th>Component</th>
+            <th>IP Address / Location</th>
+        </tr>
+
+        <tr>
+            <td>Apache Web Server 1</td>
+            <td>192.168.1.191</td>
+        </tr>
+
+        <tr>
+            <td>Apache Web Server 2</td>
+            <td>192.168.1.192</td>
+        </tr>
+
+        <tr>
+            <td>Apache Web Server 3</td>
+            <td>192.168.1.193</td>
+        </tr>
+
+        <tr>
+            <td>SFTP Server</td>
+            <td>192.168.1.194</td>
+        </tr>
+
+        <tr>
+            <td>Global Load Balancer (HAProxy)</td>
+            <td>192.168.1.195</td>
+        </tr>
+
+        <tr>
+            <td>Shared NFS Storage</td>
+            <td>192.168.1.130:/nfs/shared</td>
+        </tr>
+
+    </table>
+
+    <h2>Request Flow</h2>
+
+    <table>
+
+        <tr>
+            <th>Step</th>
+            <th>Description</th>
+        </tr>
+
+        <tr>
+            <td>1</td>
+            <td>User accesses the application through the Global Load Balancer.</td>
+        </tr>
+
+        <tr>
+            <td>2</td>
+            <td>The Load Balancer forwards the request to one of the Apache web servers.</td>
+        </tr>
+
+        <tr>
+            <td>3</td>
+            <td>The selected Apache server reads website files from the shared NFS storage.</td>
+        </tr>
+
+        <tr>
+            <td>4</td>
+            <td>Content uploaded through the SFTP server is immediately available to all web servers.</td>
+        </tr>
+
+    </table>
+
+    <h2>Demo Status</h2>
+
+    <p class="success">
+        ✔ High Availability Web Servers<br>
+        ✔ Shared NFS Storage<br>
+        ✔ Global Load Balancing<br>
+        ✔ Centralized File Upload via SFTP
+    </p>
+
+    <h2>Application URL</h2>
+
+    <div class="url">
+        http://192.168.1.195
+    </div>
+
+    <div class="footer">
+        <p>Web Server Load Balancer Demonstration using Shared NFS Storage</p>
+    </div>
+
+</div>
+
+</body>
+</html>

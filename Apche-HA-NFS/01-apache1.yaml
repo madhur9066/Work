@@ -1,0 +1,68 @@
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apache1
+  namespace: demo
+  labels:
+    app: apache1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apache1
+
+  template:
+    metadata:
+      labels:
+        app: apache1
+
+    spec:
+      hostname: apache1
+
+      containers:
+      - name: apache
+        image: httpd:2.4
+        imagePullPolicy: IfNotPresent
+
+        ports:
+        - containerPort: 80
+
+        volumeMounts:
+        - name: nfs-share
+          mountPath: /usr/local/apache2/htdocs
+
+        - name: apache-config
+          mountPath: /usr/local/apache2/conf/httpd.conf
+          subPath: httpd.conf
+
+      volumes:
+      - name: nfs-share
+        nfs:
+          server: 192.168.1.130
+          path: /nfs/shared
+
+      - name: apache-config
+        configMap:
+          name: apache-config
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: apache1
+  namespace: demo
+
+spec:
+  type: LoadBalancer
+  loadBalancerIP: 192.168.1.191
+
+  selector:
+    app: apache1
+
+  ports:
+  - name: http
+    protocol: TCP
+    port: 80
+    targetPort: 80
